@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 10</title>
+    <style>
+        body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            width: 300px;
+            height: 500px;
+            border: 1px solid black;
+        }
+
+        .card img {
+            width: 100%;
+        }
+    </style>
+    <script src="data.js"></script>
+</head>
+
+<body>
+    <script>
+        const cardDeck = JSON.parse(data);
+        cardDeck['cards'].forEach(element => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            const img = document.createElement('img');
+            img.src = element['image'];
+            img.alt = element['code'];
+            const value = document.createElement('p');
+            value.textContent = `${element['value']} `;
+            const suit = document.createElement('span');
+            suit.textContent = element['suit'];
+            document.body.appendChild(card);
+            card.appendChild(img);
+            card.appendChild(value);
+            value.appendChild(suit);
+        });
+        const remaining = document.createElement('h2');
+        remaining.textContent = `Осталось карт в колоде: ${cardDeck['remaining']}`;
+        document.body.appendChild(remaining);
+    </script>
+</body>
+
+</html>
