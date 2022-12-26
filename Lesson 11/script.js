@@ -11,6 +11,7 @@ const productsAdaptive = document.createElement('style');
 document.body.appendChild(productsAdaptive);
 let count = 0;
 let oldCount = 0;
+const prodButtons = [];
 const showProducts = () => {
     for (count; count < productsData.length; count++) {
         if (!(count % 6) && (count !== oldCount)) break;
@@ -29,6 +30,7 @@ const showProducts = () => {
         addToCart.textContent = 'Add to Cart';
         productButton.appendChild(svgCart.cloneNode(true));
         productButton.appendChild(addToCart);
+        prodButtons.push(productButton);
         productHover.appendChild(productButton);
 
         const titleAndPrice = document.createElement('div');
@@ -60,5 +62,88 @@ const showProducts = () => {
     }`;
 }
 showProducts();
+
+const cart = {};
+const cartItems = document.createElement('section');
+cartItems.classList.add('cart__items');
+const cartItemsHead = document.createElement('h3');
+cartItemsHead.textContent = 'Cart Items';
+const quantityBox = document.createElement('div');
+quantityBox.classList.add('quantity__box');
+const addClickEvent = () => {
+    prodButtons.forEach(element => {
+        element.onclick = () => {
+            if (!Object.keys(cart).length) {
+                document.querySelector('.features__bgr').after(cartItemsHead);
+                cartItemsHead.after(cartItems);
+            }
+            if (typeof cart[prodButtons.indexOf(element)] !== 'object') {
+                cart[prodButtons.indexOf(element)] = [1];
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart__item');
+                cartItems.appendChild(cartItem);
+                //     productsAdaptive.textContent = productsAdaptive.textContent.concat(`.cart__items {
+                //     grid-template-rows: repeat(${Object.keys(cart).length}, 1fr);
+                // }`);
+                cartItems.style.gridTemplateRows = `repeat(${Object.keys(cart).length}, 1fr)`;
+                const cartItemImg = document.createElement('div');
+                cartItemImg.classList.add('cart__item__img');
+                cartItemImg.style.background = `url(${productsData[prodButtons.indexOf(element)]['image']})`;
+                cartItemImg.style.backgroundSize = 'cover';
+                const cartItemText = document.createElement('div');
+                cartItemText.classList.add('cart__item__text');
+                const cartItemTitle = document.createElement('h4');
+                cartItemTitle.classList.add('cart__item__title');
+                cartItemTitle.textContent = productsData[prodButtons.indexOf(element)]['title'];
+                const cartItemPrice = document.createElement('p');
+                cartItemPrice.textContent = 'Price: ';
+                const cartPriceSpan = document.createElement('span');
+                cartPriceSpan.textContent = `${productsData[prodButtons.indexOf(element)]['price']} Ꝑ`;
+                const quantity = document.createElement('div');
+                quantity.classList.add('quantity');
+                quantity.textContent = 'Quantity:';
+                const itemQuantityBox = quantityBox.cloneNode(true);
+                cart[prodButtons.indexOf(element)].push(itemQuantityBox);
+
+                const deleteItem = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                deleteItem.setAttribute('width', 18);
+                deleteItem.setAttribute('height', 18);
+                deleteItem.setAttribute('fill', '#575757'); const deleteItemPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                deleteItemPath.setAttribute('d', 'M11.2453 9L17.5302 2.71516C17.8285 2.41741 17.9962 2.01336 17.9966 1.59191C17.997 1.17045 17.8299 0.76611 17.5322 0.467833C17.2344 0.169555 16.8304 0.00177586 16.4089 0.00140366C15.9875 0.00103146 15.5831 0.168097 15.2848 0.465848L9 6.75069L2.71516 0.465848C2.41688 0.167571 2.01233 0 1.5905 0C1.16868 0 0.764125 0.167571 0.465848 0.465848C0.167571 0.764125 0 1.16868 0 1.5905C0 2.01233 0.167571 2.41688 0.465848 2.71516L6.75069 9L0.465848 15.2848C0.167571 15.5831 0 15.9877 0 16.4095C0 16.8313 0.167571 17.2359 0.465848 17.5342C0.764125 17.8324 1.16868 18 1.5905 18C2.01233 18 2.41688 17.8324 2.71516 17.5342L9 11.2493L15.2848 17.5342C15.5831 17.8324 15.9877 18 16.4095 18C16.8313 18 17.2359 17.8324 17.5342 17.5342C17.8324 17.2359 18 16.8313 18 16.4095C18 15.9877 17.8324 15.5831 17.5342 15.2848L11.2453 9Z');
+                deleteItem.appendChild(deleteItemPath);
+                deleteItem.onclick = () => {
+                    if (cart[prodButtons.indexOf(element)][0] > 1) {
+                        cart[prodButtons.indexOf(element)][0]--;
+                        cart[prodButtons.indexOf(element)][1].textContent = cart[prodButtons.indexOf(element)][0];
+                    }
+                    else {
+                        delete cart[prodButtons.indexOf(element)];
+                        cartItem.remove();
+                        cartItems.style.gridTemplateRows = `repeat(${Object.keys(cart).length}, 1fr)`;
+                    }
+                    if (!Object.keys(cart).length) {
+                        cartItems.remove();
+                        cartItemsHead.remove();
+                    }
+                }
+
+                quantity.appendChild(itemQuantityBox);
+                cartItemPrice.appendChild(cartPriceSpan);
+                cartItemText.appendChild(cartItemTitle);
+                cartItemText.appendChild(cartItemPrice);
+                cartItemText.appendChild(quantity);
+                cartItem.appendChild(cartItemImg);
+                cartItem.appendChild(cartItemText);
+                cartItem.appendChild(deleteItem);
+            }
+            else cart[prodButtons.indexOf(element)][0]++;
+            cart[prodButtons.indexOf(element)][1].textContent = cart[prodButtons.indexOf(element)][0];
+        }
+    });
+}
+addClickEvent();
 const browseAllBtn = document.querySelector('.all-prod-btn');
-browseAllBtn.onclick = () => showProducts();
+browseAllBtn.onclick = () => {
+    showProducts();
+    addClickEvent();
+}
