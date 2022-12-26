@@ -555,6 +555,11 @@ h3 {
 .cart__item svg {
     margin-top: 28px;
     margin-left: 16px;
+    transition: fill 300ms ease;
+}
+
+.cart__item svg:hover {
+    fill: #F16D7F;
 }
 
 .photo__subscribe {
